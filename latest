@@ -12,12 +12,12 @@ Players = cloneref(game:GetService("Players"))
 if not game:IsLoaded() then
     local notLoaded = Instance.new("Message")
     notLoaded.Parent = COREGUI
-    notLoaded.Text = "Infinite Yield is waiting for the game to load"
+    notLoaded.Text = "Fatality Yield ждет запуска игры"
     game.Loaded:Wait()
     notLoaded:Destroy()
 end
 
-currentVersion = "."
+currentVersion = "0.2"
 
 Holder = Instance.new("Frame")
 Title = Instance.new("TextLabel")
