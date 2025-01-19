@@ -208,6 +208,7 @@ Title.Size = UDim2.new(0, 250, 0, 20)
 Title.Font = Enum.Font.SourceSans
 Title.TextSize = 17
 Title.Text = "Fatality yeld " .. currentVersion
+Title.CornerRadius = UDim.new(0, 8)
 
 do
 	local emoji = ({
