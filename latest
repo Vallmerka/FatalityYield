@@ -1,5 +1,5 @@
 if IY_LOADED and not _G.IY_DEBUG == true then
-    -- error("Fatality Yield уже запущен", 0)
+    -- error("Infinite Yield is already running!", 0)
     return
 end
 
@@ -12,12 +12,12 @@ Players = cloneref(game:GetService("Players"))
 if not game:IsLoaded() then
     local notLoaded = Instance.new("Message")
     notLoaded.Parent = COREGUI
-    notLoaded.Text = "Fatality Yield ждет запуска игры"
+    notLoaded.Text = "Infinite Yield is waiting for the game to load"
     game.Loaded:Wait()
     notLoaded:Destroy()
 end
 
-currentVersion = "0.2"
+currentVersion = "."
 
 Holder = Instance.new("Frame")
 Title = Instance.new("TextLabel")
@@ -208,7 +208,6 @@ Title.Size = UDim2.new(0, 250, 0, 20)
 Title.Font = Enum.Font.SourceSans
 Title.TextSize = 17
 Title.Text = "Fatality yeld " .. currentVersion
-Title.CornerRadius = UDim.new(0, 8)
 
 do
 	local emoji = ({
@@ -1375,7 +1374,7 @@ About.Position = UDim2.new(0, 17, 0, 10)
 About.Size = UDim2.new(0, 187, 0, 49)
 About.Font = Enum.Font.SourceSans
 About.TextSize = 14
-About.Text = "Plugins are .IY files and should be located in the 'workspace' folder of your exploit."
+About.Text = "Plugins are .iy files and should be located in the 'workspace' folder of your exploit."
 About.TextColor3 = Color3.fromRGB(255, 255, 255)
 About.TextWrapped = true
 About.TextYAlignment = Enum.TextYAlignment.Top
@@ -1993,9 +1992,9 @@ end
 function toClipboard(txt)
     if everyClipboard then
         everyClipboard(tostring(txt))
-        notiIY("Clipboard", "Copied to clipboard")
+        notify("Clipboard", "Copied to clipboard")
     else
-        notiIY("Clipboard", "Your exploit doesn't have the ability to use the clipboard")
+        notify("Clipboard", "Your exploit doesn't have the ability to use the clipboard")
     end
 end
 
@@ -2834,7 +2833,7 @@ nosaves = false
 useFactorySettings = function()
     prefix = ';'
     StayOpen = false
-    KeepInIYield = true
+    KeepInfYield = true
     espTransparency = 0.3
     logsEnabled = false
     jLogsEnabled = false
@@ -2928,14 +2927,14 @@ local loadedEventData = nil
 local jsonAttempts = 0
 function saves()
     if writefileExploit() and readfileExploit() and jsonAttempts < 10 then
-        local readSuccess, out = readfile("IY_FE.IY", true)
+        local readSuccess, out = readfile("IY_FE.iy", true)
         if readSuccess then
             if out ~= nil and tostring(out):gsub("%s", "") ~= "" then
                 local success, response = pcall(function()
                     local json = HttpService:JSONDecode(out)
                     if json.prefix ~= nil then prefix = json.prefix else prefix = ';' end
                     if json.StayOpen ~= nil then StayOpen = json.StayOpen else StayOpen = false end
-                    if json.keepIY ~= nil then KeepInIYield = json.keepIY else KeepInIYield = true end
+                    if json.keepIY ~= nil then KeepInfYield = json.keepIY else KeepInfYield = true end
                     if json.espTransparency ~= nil then espTransparency = json.espTransparency else espTransparency = 0.3 end
                     if json.logsEnabled ~= nil then logsEnabled = json.logsEnabled else logsEnabled = false end
                     if json.jLogsEnabled ~= nil then jLogsEnabled = json.jLogsEnabled else jLogsEnabled = false end
@@ -2956,14 +2955,14 @@ function saves()
                     jsonAttempts = jsonAttempts + 1
                     warn("Save Json Error:", response)
                     warn("Overwriting Save File")
-                    writefile("IY_FE.IY", defaults, true)
+                    writefile("IY_FE.iy", defaults, true)
                     wait()
                     saves()
                 end
             else
-                writefile("IY_FE.IY", defaults, true)
+                writefile("IY_FE.iy", defaults, true)
                 wait()
-                local dReadSuccess, dOut = readfile("IY_FE.IY", true)
+                local dReadSuccess, dOut = readfile("IY_FE.iy", true)
                 if dReadSuccess and dOut ~= nil and tostring(dOut):gsub("%s", "") ~= "" then
                     saves()
                 else
@@ -2973,9 +2972,9 @@ function saves()
                 end
             end
         else
-            writefile("IY_FE.IY", defaults, true)
+            writefile("IY_FE.iy", defaults, true)
             wait()
-            local dReadSuccess, dOut = readfile("IY_FE.IY", true)
+            local dReadSuccess, dOut = readfile("IY_FE.iy", true)
             if dReadSuccess and dOut ~= nil and tostring(dOut):gsub("%s", "") ~= "" then
                 saves()
             else
@@ -3003,7 +3002,7 @@ function updatesaves()
 		local update = {
 			prefix = prefix;
 			StayOpen = StayOpen;
-			keepIY = KeepInIYield;
+			keepIY = KeepInfYield;
 			espTransparency = espTransparency;
 			logsEnabled = logsEnabled;
 			jLogsEnabled = jLogsEnabled;
@@ -3019,7 +3018,7 @@ function updatesaves()
 			currentScroll = {currentScroll.R,currentScroll.G,currentScroll.B};
 			eventBinds = eventEditor.SaveData()
 		}
-		writefileCooldown("IY_FE.IY", HttpService:JSONEncode(update))
+		writefileCooldown("IY_FE.iy", HttpService:JSONEncode(update))
 	end
 end
 
@@ -3092,12 +3091,12 @@ function cmdbarHolder()
 end
 
 pinNotification = nil
-local notiIYCount = 0
-function notiIY(text,text2,length)
+local notifyCount = 0
+function notify(text,text2,length)
 	task.spawn(function()
-		local LnotiIYCount = notiIYCount+1
+		local LnotifyCount = notifyCount+1
 		local notificationPinned = false
-		notiIYCount = notiIYCount+1
+		notifyCount = notifyCount+1
 		if pinNotification then pinNotification:Disconnect() end
 		pinNotification = PinButton.MouseButton1Click:Connect(function()
 			task.spawn(function()
@@ -3129,12 +3128,12 @@ function notiIY(text,text2,length)
 		else
 			wait(10)
 		end
-		if LnotiIYCount == notiIYCount then
+		if LnotifyCount == notifyCount then
 			if closepressed == false and notificationPinned == false then
 				pinNotification:Disconnect()
 				Notification:TweenPosition(UDim2.new(1, Notification.Position.X.Offset, 1, 0), "InOut", "Quart", 0.5, true, nil)
 			end
-			notiIYCount = 0
+			notifyCount = 0
 		end
 	end)
 end
@@ -3824,7 +3823,7 @@ selectJoin.MouseButton1Down:Connect(function()
 end)
 
 if not writefileExploit() then
-    notiIY("Saves", "Your exploit does not support read/write file. Your settings will not save.")
+    notify("Saves", "Your exploit does not support read/write file. Your settings will not save.")
 end
 
 ChatLog = function(plr)
@@ -3848,7 +3847,7 @@ end
 SaveChatlogs.MouseButton1Down:Connect(function()
 	if writefileExploit() then
 		if #scroll_2:GetChildren() > 0 then
-			notiIY("Loading",'Hold on a sec')
+			notify("Loading",'Hold on a sec')
 			local placeName = CleanFileName(MarketplaceService:GetProductInfo(PlaceId).Name)
 			local writelogs = '-- Infinite Yield Chat logs for "'..placeName..'"\n'
 			for _, child in pairs(scroll_2:GetChildren()) do
@@ -3867,10 +3866,10 @@ SaveChatlogs.MouseButton1Down:Connect(function()
 				end
 			end
 			nameFile()
-			notiIY('Chat Logs','Saved chat logs to the workspace folder within your exploit folder.')
+			notify('Chat Logs','Saved chat logs to the workspace folder within your exploit folder.')
 		end
 	else
-		notiIY('Chat Logs','Your exploit does not support write file. You cannot save chat logs.')
+		notify('Chat Logs','Your exploit does not support write file. You cannot save chat logs.')
 	end
 end)
 
@@ -3895,7 +3894,7 @@ Players.PlayerRemoving:Connect(function(player)
 			viewDied:Disconnect()
 			viewChanged:Disconnect()
 		end
-		notiIY('Spectate','View turned off (player left)')
+		notify('Spectate','View turned off (player left)')
 	end
 	eventEditor.FireEvent("OnLeave", player.Name)
 end)
@@ -3941,7 +3940,7 @@ Delete.MouseButton1Click:Connect(function()
 	binds = {}
 	refreshbinds()
 	updatesaves()
-	notiIY('Keybinds Updated','Removed all keybinds')
+	notify('Keybinds Updated','Removed all keybinds')
 end)
 
 Close_2.MouseButton1Click:Connect(function()
@@ -4020,7 +4019,7 @@ CopyPath.MouseButton1Click:Connect(function()
 	if Path.Text ~= "" then
 		toClipboard(Path.Text)
 	else
-		notiIY('Copy Path','Select a part to copy its path')
+		notify('Copy Path','Select a part to copy its path')
 	end
 end)
 
@@ -4035,7 +4034,7 @@ ChoosePart.MouseButton1Click:Connect(function()
 				end
 			end
 			if not FoundDupe then
-				notiIY('Modified Waypoints',"Created waypoint: "..selected.Adornee.Name..tpNameExt)
+				notify('Modified Waypoints',"Created waypoint: "..selected.Adornee.Name..tpNameExt)
 				pWayPoints[#pWayPoints + 1] = {NAME = selected.Adornee.Name..tpNameExt, COORD = {selected.Adornee}}
 			else
 				if isNumber(tpNameExt) then
@@ -4049,7 +4048,7 @@ ChoosePart.MouseButton1Click:Connect(function()
 		handleWpNames()
 		refreshwaypoints()
 	else
-		notiIY('Part Selection','Select a part first')
+		notify('Part Selection','Select a part first')
 	end
 end)
 
@@ -4058,7 +4057,7 @@ customAlias = {}
 Delete_3.MouseButton1Click:Connect(function()
 	customAlias = {}
 	aliases = {}
-	notiIY('Aliases Modified','Removed all aliases')
+	notify('Aliases Modified','Removed all aliases')
 	updatesaves()
 	refreshaliases()
 end)
@@ -4303,7 +4302,7 @@ CMDs[#CMDs + 1] = {NAME = 'remotespy / rspy', DESC = 'Opens Simple Spy V3'}
 CMDs[#CMDs + 1] = {NAME = 'audiologger / alogger', DESC = 'Opens Edges audio logger'}
 CMDs[#CMDs + 1] = {NAME = 'serverinfo / info', DESC = 'Gives you info about the server'}
 CMDs[#CMDs + 1] = {NAME = 'jobid', DESC = 'Copies the games JobId to your clipboard'}
-CMDs[#CMDs + 1] = {NAME = 'notiIYjobid', DESC = 'Notifies you the games JobId'}
+CMDs[#CMDs + 1] = {NAME = 'notifyjobid', DESC = 'Notifies you the games JobId'}
 CMDs[#CMDs + 1] = {NAME = 'rejoin / rj', DESC = 'Makes you rejoin the game'}
 CMDs[#CMDs + 1] = {NAME = 'autorejoin / autorj', DESC = 'Automatically rejoins the server if you get kicked/disconnected'}
 CMDs[#CMDs + 1] = {NAME = 'serverhop / shop', DESC = 'Teleports you to a different server'}
@@ -4325,11 +4324,11 @@ CMDs[#CMDs + 1] = {NAME = 'hideguis', DESC = 'Hides any GUIs in PlayerGui'}
 CMDs[#CMDs + 1] = {NAME = 'unhideguis', DESC = 'Undoes hideguis'}
 CMDs[#CMDs + 1] = {NAME = 'guidelete', DESC = 'Enables backspace to delete GUI'}
 CMDs[#CMDs + 1] = {NAME = 'unguidelete / noguidelete', DESC = 'Disables guidelete'}
-CMDs[#CMDs + 1] = {NAME = 'hideIY', DESC = 'Hides the main IY GUI'}
-CMDs[#CMDs + 1] = {NAME = 'showIY / unhideIY', DESC = 'Shows IY again'}
-CMDs[#CMDs + 1] = {NAME = 'keepIY', DESC = 'Auto execute IY when you teleport through servers'}
-CMDs[#CMDs + 1] = {NAME = 'unkeepIY', DESC = 'Disable keepIY'}
-CMDs[#CMDs + 1] = {NAME = 'togglekeepIY', DESC = 'Toggle keepIY'}
+CMDs[#CMDs + 1] = {NAME = 'hideiy', DESC = 'Hides the main IY GUI'}
+CMDs[#CMDs + 1] = {NAME = 'showiy / unhideiy', DESC = 'Shows IY again'}
+CMDs[#CMDs + 1] = {NAME = 'keepiy', DESC = 'Auto execute IY when you teleport through servers'}
+CMDs[#CMDs + 1] = {NAME = 'unkeepiy', DESC = 'Disable keepiy'}
+CMDs[#CMDs + 1] = {NAME = 'togglekeepiy', DESC = 'Toggle keepiy'}
 CMDs[#CMDs + 1] = {NAME = 'savegame / saveplace', DESC = 'Uses saveinstance to save the game'}
 CMDs[#CMDs + 1] = {NAME = 'clearerror', DESC = 'Clears the annoying box and blur when a game kicks you'}
 CMDs[#CMDs + 1] = {NAME = 'clientantikick / antikick (CLIENT)', DESC = 'Prevents localscripts from kicking you'}
@@ -4341,7 +4340,7 @@ CMDs[#CMDs + 1] = {NAME = 'antilag / boostfps / lowgraphics', DESC = 'Lowers gam
 CMDs[#CMDs + 1] = {NAME = 'record / rec', DESC = 'Starts roblox recorder'}
 CMDs[#CMDs + 1] = {NAME = 'screenshot / scrnshot', DESC = 'Takes a screenshot'}
 CMDs[#CMDs + 1] = {NAME = 'togglefullscreen / togglefs', DESC = 'Toggles fullscreen'}
-CMDs[#CMDs + 1] = {NAME = 'notiIY [text]', DESC = 'Sends you a notification with the provided text'}
+CMDs[#CMDs + 1] = {NAME = 'notify [text]', DESC = 'Sends you a notification with the provided text'}
 CMDs[#CMDs + 1] = {NAME = 'lastcommand / lastcmd', DESC = 'Executes the previous command used'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
@@ -4394,7 +4393,7 @@ CMDs[#CMDs + 1] = {NAME = 'tpposition / tppos [X Y Z]', DESC = 'Teleports you to
 CMDs[#CMDs + 1] = {NAME = 'tweentpposition / ttppos [X Y Z]', DESC = 'Tween to coordinates (bypasses some anti cheats)'}
 CMDs[#CMDs + 1] = {NAME = 'offset [X Y Z]', DESC = 'Offsets you by certain coordinates'}
 CMDs[#CMDs + 1] = {NAME = 'tweenoffset / toffset [X Y Z]', DESC = 'Tween offset (bypasses some anti cheats)'}
-CMDs[#CMDs + 1] = {NAME = 'notiIYposition / notiIYpos [player]', DESC = 'Notifies you the coordinates of a character'}
+CMDs[#CMDs + 1] = {NAME = 'notifyposition / notifypos [player]', DESC = 'Notifies you the coordinates of a character'}
 CMDs[#CMDs + 1] = {NAME = 'copyposition / copypos [player]', DESC = 'Copies the coordinates of a character to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'walktoposition / walktopos [X Y Z]', DESC = 'Makes you walk to a coordinate'}
 CMDs[#CMDs + 1] = {NAME = 'spawnpoint / spawn [delay]', DESC = 'Sets a position where you will spawn'}
@@ -4443,7 +4442,7 @@ CMDs[#CMDs + 1] = {NAME = 'freecamwaypoint / fcwp [name]', DESC = 'Moves / opens
 CMDs[#CMDs + 1] = {NAME = 'freecamgoto / fcgoto / fctp [player]', DESC = 'Moves / opens freecam to a player'}
 CMDs[#CMDs + 1] = {NAME = 'unfreecam / unfc', DESC = 'Disables freecam'}
 CMDs[#CMDs + 1] = {NAME = 'freecamspeed / fcspeed [num]', DESC = 'Adjusts freecam speed (default is 1)'}
-CMDs[#CMDs + 1] = {NAME = 'notiIYfreecamposition / notiIYfcpos', DESC = 'Noitifies you your freecam coordinates'}
+CMDs[#CMDs + 1] = {NAME = 'notifyfreecamposition / notifyfcpos', DESC = 'Noitifies you your freecam coordinates'}
 CMDs[#CMDs + 1] = {NAME = 'copyfreecamposition / copyfcpos', DESC = 'Copies your freecam coordinates to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'gotocamera / gotocam', DESC = 'Teleports you to the location of your camera'}
 CMDs[#CMDs + 1] = {NAME = 'tweengotocam / tgotocam', DESC = 'Tweens you to the location of your camera'}
@@ -4533,10 +4532,10 @@ CMDs[#CMDs + 1] = {NAME = 'orbit [player] [speed] [distance]', DESC = 'Makes you
 CMDs[#CMDs + 1] = {NAME = 'unorbit', DESC = 'Disables orbit'}
 CMDs[#CMDs + 1] = {NAME = 'stareat / stare [player]', DESC = 'Stare / look at a player'}
 CMDs[#CMDs + 1] = {NAME = 'unstareat / unstare [player]', DESC = 'Disables stareat'}
-CMDs[#CMDs + 1] = {NAME = 'rolewatch [group id] [role name]', DESC = 'NotiIY if someone from a watched group joins the server'}
+CMDs[#CMDs + 1] = {NAME = 'rolewatch [group id] [role name]', DESC = 'Notify if someone from a watched group joins the server'}
 CMDs[#CMDs + 1] = {NAME = 'rolewatchstop / unrolewatch', DESC = 'Disable Rolewatch'}
 CMDs[#CMDs + 1] = {NAME = 'rolewatchleave', DESC = 'Toggle if you should leave the game if someone from a watched group joins the server'}
-CMDs[#CMDs + 1] = {NAME = 'staffwatch', DESC = 'NotiIY if a staff member of the game joins the server'}
+CMDs[#CMDs + 1] = {NAME = 'staffwatch', DESC = 'Notify if a staff member of the game joins the server'}
 CMDs[#CMDs + 1] = {NAME = 'unstaffwatch', DESC = 'Disable Staffwatch'}
 CMDs[#CMDs + 1] = {NAME = 'attach [player] (TOOL)', DESC = 'Attaches you to a player (YOU NEED A TOOL)'}
 CMDs[#CMDs + 1] = {NAME = 'kill [player] (TOOL)', DESC = 'Kills a player (YOU NEED A TOOL)'}
@@ -4695,7 +4694,7 @@ CMDs[#CMDs + 1] = {NAME = 'breakloops / break (cmd loops)', DESC = 'Stops any cm
 CMDs[#CMDs + 1] = {NAME = 'removecmd / deletecmd', DESC = 'Removes a command until the admin is reloaded'}
 CMDs[#CMDs + 1] = {NAME = 'tpwalk / teleportwalk [num]', DESC = 'Teleports you to your move direction'}
 CMDs[#CMDs + 1] = {NAME = 'untpwalk / unteleportwalk', DESC = 'Undoes tpwalk / teleportwalk'}
-CMDs[#CMDs + 1] = {NAME = 'notiIYping / ping', DESC = 'NotiIY yourself your ping'}
+CMDs[#CMDs + 1] = {NAME = 'notifyping / ping', DESC = 'Notify yourself your ping'}
 CMDs[#CMDs + 1] = {NAME = 'trip', DESC = 'Makes your character fall over'}
 CMDs[#CMDs + 1] = {NAME = 'norender', DESC = 'Disable 3d Rendering to decrease the amount of CPU the client uses'}
 CMDs[#CMDs + 1] = {NAME = 'render', DESC = 'Enable 3d Rendering'}
@@ -4991,7 +4990,7 @@ function removecmd(cmd)
 					if string.find(c.Text, "^"..cmd.."$") or string.find(c.Text, "^"..cmd.." ") or string.find(c.Text, " "..cmd.."$") or string.find(c.Text, " "..cmd.." ") then
 						c.TextTransparency = 0.7
 						c.MouseButton1Click:Connect(function()
-							notiIY(c.Text, "Command has been disabled by you or a plugin")
+							notify(c.Text, "Command has been disabled by you or a plugin")
 						end)
 					end
 				end
@@ -5799,9 +5798,9 @@ function unkeybind(cmd,key)
 	refreshbinds()
 	updatesaves()
 	if key == 'RightClick' or key == 'LeftClick' then
-		notiIY('Keybinds Updated','Unbinded '..key..' from '..cmd)
+		notify('Keybinds Updated','Unbinded '..key..' from '..cmd)
 	else
-		notiIY('Keybinds Updated','Unbinded '..key:sub(14)..' from '..cmd)
+		notify('Keybinds Updated','Unbinded '..key:sub(14)..' from '..cmd)
 	end
 end
 
@@ -5926,7 +5925,7 @@ end)
 Add_2.MouseButton1Click:Connect(function()
 	if keySelected then
 		if string.find(Cmdbar_2.Text, "\\\\") or string.find(Cmdbar_3.Text, "\\\\") then
-			notiIY('Keybind Error','Only use one backslash to keybind multiple commands into one keybind or command')
+			notify('Keybind Error','Only use one backslash to keybind multiple commands into one keybind or command')
 		else
 			if newToggle and Cmdbar_3.Text ~= '' and Cmdbar_2.text ~= '' then
 				addbind(Cmdbar_2.Text,keyPressed,false,Cmdbar_3.Text)
@@ -5938,9 +5937,9 @@ Add_2.MouseButton1Click:Connect(function()
 			refreshbinds()
 			updatesaves()
 			if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-				notiIY('Keybinds Updated','Binded '..keyPressed..' to '..Cmdbar_2.Text..(newToggle and " / "..Cmdbar_3.Text or ""))
+				notify('Keybinds Updated','Binded '..keyPressed..' to '..Cmdbar_2.Text..(newToggle and " / "..Cmdbar_3.Text or ""))
 			else
-				notiIY('Keybinds Updated','Binded '..keyPressed:sub(14)..' to '..Cmdbar_2.Text..(newToggle and " / "..Cmdbar_3.Text or ""))
+				notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to '..Cmdbar_2.Text..(newToggle and " / "..Cmdbar_3.Text or ""))
 			end
 		end
 	end
@@ -6013,9 +6012,9 @@ ClickTP.Select.MouseButton1Click:Connect(function()
 		refreshbinds()
 		updatesaves()
 		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-			notiIY('Keybinds Updated','Binded '..keyPressed..' to click tp')
+			notify('Keybinds Updated','Binded '..keyPressed..' to click tp')
 		else
-			notiIY('Keybinds Updated','Binded '..keyPressed:sub(14)..' to click tp')
+			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to click tp')
 		end
 	end
 end)
@@ -6026,9 +6025,9 @@ ClickDelete.Select.MouseButton1Click:Connect(function()
 		refreshbinds()
 		updatesaves()
 		if keyPressed == 'RightClick' or keyPressed == 'LeftClick' then
-			notiIY('Keybinds Updated','Binded '..keyPressed..' to click delete')
+			notify('Keybinds Updated','Binded '..keyPressed..' to click delete')
 		else
-			notiIY('Keybinds Updated','Binded '..keyPressed:sub(14)..' to click delete')
+			notify('Keybinds Updated','Binded '..keyPressed:sub(14)..' to click delete')
 		end
 	end
 end)
@@ -6082,17 +6081,17 @@ end)
 PluginsGUI = PluginEditor.background
 
 function addPlugin(name)
-	if name:lower() == 'plugin file name' or name:lower() == 'IY_fe.IY' or name == 'IY_fe' then
-		notiIY('Plugin Error','Please enter a valid plugin')
+	if name:lower() == 'plugin file name' or name:lower() == 'iy_fe.iy' or name == 'iy_fe' then
+		notify('Plugin Error','Please enter a valid plugin')
 	else
 		local file
 		local fileName
-		if name:sub(-3) == '.IY' then
+		if name:sub(-3) == '.iy' then
 			pcall(function() file = readfile(name) end)
 			fileName = name
 		else
-			pcall(function() file = readfile(name..'.IY') end)
-			fileName = name..'.IY'
+			pcall(function() file = readfile(name..'.iy') end)
+			fileName = name..'.iy'
 		end
 		if file then
 			if not FindInTable(PluginsTable, fileName) then
@@ -6101,17 +6100,17 @@ function addPlugin(name)
 				refreshplugins()
 				pcall(eventEditor.Refresh)
 			else
-				notiIY('Plugin Error','This plugin is already added')
+				notify('Plugin Error','This plugin is already added')
 			end
 		else
-			notiIY('Plugin Error','Cannot locate file "'..fileName..'". Is the file in the correct folder?')
+			notify('Plugin Error','Cannot locate file "'..fileName..'". Is the file in the correct folder?')
 		end
 	end
 end
 
 function deletePlugin(name)
-	local pName = name..'.IY'
-	if name:sub(-3) == '.IY' then
+	local pName = name..'.iy'
+	if name:sub(-3) == '.iy' then
 		pName = name
 	end
 	for i = #cmds,1,-1 do
@@ -6127,7 +6126,7 @@ function deletePlugin(name)
 	for i,v in pairs(PluginsTable) do
 		if v == pName then
 			table.remove(PluginsTable, i)
-			notiIY('Removed Plugin',pName..' was removed')
+			notify('Removed Plugin',pName..' was removed')
 		end
 	end
 	IndexContents('',true)
@@ -6175,7 +6174,7 @@ function LoadPlugin(val,startup)
 	end
 
 	function handlePluginError(plerror)
-		notiIY('Plugin Error','An error occurred with the plugin, "'..val..'" and it could not be loaded')
+		notify('Plugin Error','An error occurred with the plugin, "'..val..'" and it could not be loaded')
 		if FindInTable(PluginsTable,val) then
 			for i,v in pairs(PluginsTable) do
 				if v == val then
@@ -6197,7 +6196,7 @@ function LoadPlugin(val,startup)
 
 	if plugin ~= nil then
 		if not startup then
-			notiIY('Loaded Plugin',"Name: "..plugin["PluginName"].."\n".."Description: "..plugin["PluginDescription"])
+			notify('Loaded Plugin',"Name: "..plugin["PluginName"].."\n".."Description: "..plugin["PluginDescription"])
 		end
 		addcmdtext('',val)
 		addcmdtext(string.upper('--'..plugin["PluginName"]),val,plugin["PluginDescription"])
@@ -6266,7 +6265,7 @@ Plugins.MouseButton1Click:Connect(function()
 		wait(0.5)
 		SettingsHolder.Visible = false
 	else
-		notiIY('Incompatible Exploit','Your exploit is unable to use plugins (missing read/writefile)')
+		notify('Incompatible Exploit','Your exploit is unable to use plugins (missing read/writefile)')
 	end
 end)
 
@@ -6277,7 +6276,7 @@ end)
 
 local TeleportCheck = false
 Players.LocalPlayer.OnTeleport:Connect(function(State)
-	if KeepInIYield and (not TeleportCheck) and queueteleport then
+	if KeepInfYield and (not TeleportCheck) and queueteleport then
 		TeleportCheck = true
 		queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()")
 	end
@@ -6291,7 +6290,7 @@ addcmd('addalias',{},function(args, speaker)
 		if v.NAME:lower()==cmd or FindInTable(v.ALIAS,cmd) then
 			customAlias[alias] = v
 			aliases[#aliases + 1] = {CMD = cmd, ALIAS = alias}
-			notiIY('Aliases Modified',"Added "..alias.." as an alias to "..cmd)
+			notify('Aliases Modified',"Added "..alias.." as an alias to "..cmd)
 			updatesaves()
 			refreshaliases()
 			break
@@ -6310,7 +6309,7 @@ addcmd('removealias',{},function(args, speaker)
 				table.remove(aliases, i)
 			end
 		end
-		notiIY('Aliases Modified',"Removed the alias "..alias.." from "..cmd)
+		notify('Aliases Modified',"Removed the alias "..alias.." from "..cmd)
 		updatesaves()
 		refreshaliases()
 	end
@@ -6319,7 +6318,7 @@ end)
 addcmd('clraliases',{},function(args, speaker)
 	customAlias = {}
 	aliases = {}
-	notiIY('Aliases Modified','Removed all aliases')
+	notify('Aliases Modified','Removed all aliases')
 	updatesaves()
 	refreshaliases()
 end)
@@ -6327,9 +6326,9 @@ end)
 addcmd('discord', {'support', 'help'}, function(args, speaker)
 	if everyClipboard then
 		toClipboard('https://discord.com/invite/dYHag43eeU')
-		notiIY('Discord Invite', 'Copied to clipboard!\ndiscord.gg/dYHag43eeU')
+		notify('Discord Invite', 'Copied to clipboard!\ndiscord.gg/dYHag43eeU')
 	else
-		notiIY('Discord Invite', 'discord.gg/dYHag43eeU')
+		notify('Discord Invite', 'discord.gg/dYHag43eeU')
 	end
 	if httprequest then
 		httprequest({
@@ -6426,30 +6425,30 @@ end)
 
 
 
-addcmd('keepIY', {}, function(args, speaker)
+addcmd('keepiy', {}, function(args, speaker)
 	if queueteleport then
-		KeepInIYield = true
+		KeepInfYield = true
 		updatesaves()
 	else
-		notiIY('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
+		notify('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
 	end
 end)
 
-addcmd('unkeepIY', {}, function(args, speaker)
+addcmd('unkeepiy', {}, function(args, speaker)
 	if queueteleport then
-		KeepInIYield = false
+		KeepInfYield = false
 		updatesaves()
 	else
-		notiIY('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
+		notify('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
 	end
 end)
 
-addcmd('togglekeepIY', {}, function(args, speaker)
+addcmd('togglekeepiy', {}, function(args, speaker)
 	if queueteleport then
-		KeepInIYield = not KeepInIYield
+		KeepInfYield = not KeepInfYield
 		updatesaves()
 	else
-		notiIY('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
+		notify('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
 	end
 end)
 
@@ -6786,8 +6785,8 @@ addcmd('jobid',{},function(args, speaker)
 	toClipboard(jobId)
 end)
 
-addcmd('notiIYjobid',{},function(args, speaker)
-	notiIY('JobId / PlaceId',JobId..' / '..PlaceId)
+addcmd('notifyjobid',{},function(args, speaker)
+	notify('JobId / PlaceId',JobId..' / '..PlaceId)
 end)
 
 addcmd('breakloops',{'break'},function(args, speaker)
@@ -6812,7 +6811,7 @@ addcmd("autorejoin", {"autorj"}, function(args, speaker)
 	GuiService.ErrorMessageChanged:Connect(function()
 		execCmd("rejoin")
 	end)
-	notiIY("Auto Rejoin", "Auto rejoin enabled")
+	notify("Auto Rejoin", "Auto rejoin enabled")
 end)
 
 addcmd("serverhop", {"shop"}, function(args, speaker)
@@ -6833,10 +6832,10 @@ addcmd("serverhop", {"shop"}, function(args, speaker)
         if #servers > 0 then
             TeleportService:TeleportToPlaceInstance(PlaceId, servers[math.random(1, #servers)], Players.LocalPlayer)
         else
-            return notiIY("Serverhop", "Couldn't find a server.")
+            return notify("Serverhop", "Couldn't find a server.")
         end
     else
-        notiIY("Incompatible Exploit", "Your exploit does not support this command (missing request)")
+        notify("Incompatible Exploit", "Your exploit does not support this command (missing request)")
     end
 end)
 
@@ -6853,9 +6852,9 @@ addcmd('joinplayer',{'joinp'},function(args, speaker)
 					return Players:GetUserIdFromNameAsync(User)
 				end)
 				if not FoundUser then
-					notiIY('Join Error','Username/UserID does not exist')
+					notify('Join Error','Username/UserID does not exist')
 				else
-					notiIY('Join Player','Loading servers. Hold on a second.')
+					notify('Join Player','Loading servers. Hold on a second.')
 					local URL2 = ("https://games.roblox.com/v1/games/"..Place.."/servers/Public?sortOrder=Asc&limit=100")
 					local Http = HttpService:JSONDecode(game:HttpGet(URL2))
 					local GUID
@@ -6875,10 +6874,10 @@ addcmd('joinplayer',{'joinp'},function(args, speaker)
 					end
 
 					if GUID ~= nil then
-						notiIY('Join Player','Joining '..User)
+						notify('Join Player','Joining '..User)
 						TeleportService:TeleportToPlaceInstance(Place,GUID,Players.LocalPlayer)
 					else
-						notiIY('Join Error','Unable to join user.')
+						notify('Join Error','Unable to join user.')
 					end
 				end
 			end)
@@ -6886,10 +6885,10 @@ addcmd('joinplayer',{'joinp'},function(args, speaker)
 			if retries < 3 then
 				retries = retries + 1
 				print('ERROR retrying '..retries..'/3')
-				notiIY('Join Error','Error while trying to join. Retrying '..retries..'/3.')
+				notify('Join Error','Error while trying to join. Retrying '..retries..'/3.')
 				ToServer(User,Place)
 			else
-				notiIY('Join Error','Error while trying to join.')
+				notify('Join Error','Error while trying to join.')
 			end
 		end
 	end
@@ -6933,7 +6932,7 @@ end)
 
 FLYING = false
 QEfly = true
-IYflyspeed = 1
+iyflyspeed = 1
 vehicleflyspeed = 1
 function sFLY(vfly)
 	repeat wait() until Players.LocalPlayer and Players.LocalPlayer.Character and getRoot(Players.LocalPlayer.Character) and Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
@@ -6988,17 +6987,17 @@ function sFLY(vfly)
 	end
 	flyKeyDown = IYMouse.KeyDown:Connect(function(KEY)
 		if KEY:lower() == 'w' then
-			CONTROL.F = (vfly and vehicleflyspeed or IYflyspeed)
+			CONTROL.F = (vfly and vehicleflyspeed or iyflyspeed)
 		elseif KEY:lower() == 's' then
-			CONTROL.B = - (vfly and vehicleflyspeed or IYflyspeed)
+			CONTROL.B = - (vfly and vehicleflyspeed or iyflyspeed)
 		elseif KEY:lower() == 'a' then
-			CONTROL.L = - (vfly and vehicleflyspeed or IYflyspeed)
+			CONTROL.L = - (vfly and vehicleflyspeed or iyflyspeed)
 		elseif KEY:lower() == 'd' then 
-			CONTROL.R = (vfly and vehicleflyspeed or IYflyspeed)
+			CONTROL.R = (vfly and vehicleflyspeed or iyflyspeed)
 		elseif QEfly and KEY:lower() == 'e' then
-			CONTROL.Q = (vfly and vehicleflyspeed or IYflyspeed)*2
+			CONTROL.Q = (vfly and vehicleflyspeed or iyflyspeed)*2
 		elseif QEfly and KEY:lower() == 'q' then
-			CONTROL.E = -(vfly and vehicleflyspeed or IYflyspeed)*2
+			CONTROL.E = -(vfly and vehicleflyspeed or iyflyspeed)*2
 		end
 		pcall(function() workspace.CurrentCamera.CameraType = Enum.CameraType.Track end)
 	end)
@@ -7101,16 +7100,16 @@ local mobilefly = function(speaker, vfly)
 
 			local direction = controlModule:GetMoveVector()
 			if direction.X > 0 then
-				VelocityHandler.Velocity = VelocityHandler.Velocity + camera.CFrame.RightVector * (direction.X * ((vfly and vehicleflyspeed or IYflyspeed) * 50))
+				VelocityHandler.Velocity = VelocityHandler.Velocity + camera.CFrame.RightVector * (direction.X * ((vfly and vehicleflyspeed or iyflyspeed) * 50))
 			end
 			if direction.X < 0 then
-				VelocityHandler.Velocity = VelocityHandler.Velocity + camera.CFrame.RightVector * (direction.X * ((vfly and vehicleflyspeed or IYflyspeed) * 50))
+				VelocityHandler.Velocity = VelocityHandler.Velocity + camera.CFrame.RightVector * (direction.X * ((vfly and vehicleflyspeed or iyflyspeed) * 50))
 			end
 			if direction.Z > 0 then
-				VelocityHandler.Velocity = VelocityHandler.Velocity - camera.CFrame.LookVector * (direction.Z * ((vfly and vehicleflyspeed or IYflyspeed) * 50))
+				VelocityHandler.Velocity = VelocityHandler.Velocity - camera.CFrame.LookVector * (direction.Z * ((vfly and vehicleflyspeed or iyflyspeed) * 50))
 			end
 			if direction.Z < 0 then
-				VelocityHandler.Velocity = VelocityHandler.Velocity - camera.CFrame.LookVector * (direction.Z * ((vfly and vehicleflyspeed or IYflyspeed) * 50))
+				VelocityHandler.Velocity = VelocityHandler.Velocity - camera.CFrame.LookVector * (direction.Z * ((vfly and vehicleflyspeed or iyflyspeed) * 50))
 			end
 		end
 	end)
@@ -7125,7 +7124,7 @@ addcmd('fly',{},function(args, speaker)
 		mobilefly(speaker)
 	end
 	if args[1] and isNumber(args[1]) then
-		IYflyspeed = args[1]
+		iyflyspeed = args[1]
 	end
 end)
 
@@ -7148,7 +7147,7 @@ end)
 addcmd('flyspeed',{'flysp'},function(args, speaker)
 	local speed = args[1] or 1
 	if isNumber(speed) then
-		IYflyspeed = speed
+		iyflyspeed = speed
 	end
 end)
 
@@ -7251,7 +7250,7 @@ addcmd('float', {'platform'},function(args, speaker)
 			Float.Anchored = true
 			local FloatValue = -3.1
 			Float.CFrame = getRoot(pchar).CFrame * CFrame.new(0,FloatValue,0)
-			notiIY('Float','Float Enabled (Q = down & E = up)')
+			notify('Float','Float Enabled (Q = down & E = up)')
 			qUp = IYMouse.KeyUp:Connect(function(KEY)
 				if KEY == 'q' then
 					FloatValue = FloatValue + 0.5
@@ -7302,7 +7301,7 @@ end)
 addcmd('unfloat',{'nofloat','unplatform','noplatform'},function(args, speaker)
 	Floating = false
 	local pchar = speaker.Character
-	notiIY('Float','Float Disabled')
+	notify('Float','Float Disabled')
 	if pchar:FindFirstChild(floatName) then
 		pchar:FindFirstChild(floatName):Destroy()
 	end
@@ -7383,7 +7382,7 @@ end)
 addcmd('setwaypoint',{'swp','setwp','spos','saveposition','savepos'},function(args, speaker)
 	local WPName = tostring(getstring(1))
 	if getRoot(speaker.Character) then
-		notiIY('Modified Waypoints',"Created waypoint: "..getstring(1))
+		notify('Modified Waypoints',"Created waypoint: "..getstring(1))
 		local torso = getRoot(speaker.Character)
 		WayPoints[#WayPoints + 1] = {NAME = WPName, COORD = {math.floor(torso.Position.X), math.floor(torso.Position.Y), math.floor(torso.Position.Z)}, GAME = PlaceId}
 		if AllWaypoints ~= nil then
@@ -7397,7 +7396,7 @@ end)
 addcmd('waypointpos',{'wpp','setwaypointposition','setpos','setwaypoint','setwaypointpos'},function(args, speaker)
 	local WPName = tostring(getstring(1))
 	if getRoot(speaker.Character) then
-		notiIY('Modified Waypoints',"Created waypoint: "..getstring(1))
+		notify('Modified Waypoints',"Created waypoint: "..getstring(1))
 		WayPoints[#WayPoints + 1] = {NAME = WPName, COORD = {args[2], args[3], args[4]}, GAME = PlaceId}
 		if AllWaypoints ~= nil then
 			AllWaypoints[#AllWaypoints + 1] = {NAME = WPName, COORD = {args[2], args[3], args[4]}, GAME = PlaceId}
@@ -7537,7 +7536,7 @@ end)
 addcmd('deletewaypoint',{'dwp','dpos','deleteposition','deletepos'},function(args, speaker)
 	for i,v in pairs(WayPoints) do
 		if v.NAME:lower() == tostring(getstring(1)):lower() then
-			notiIY('Modified Waypoints',"Deleted waypoint: " .. v.NAME)
+			notify('Modified Waypoints',"Deleted waypoint: " .. v.NAME)
 			table.remove(WayPoints, i)
 		end
 	end
@@ -7552,7 +7551,7 @@ addcmd('deletewaypoint',{'dwp','dpos','deleteposition','deletepos'},function(arg
 	end
 	for i,v in pairs(pWayPoints) do
 		if v.NAME:lower() == tostring(getstring(1)):lower() then
-			notiIY('Modified Waypoints',"Deleted waypoint: " .. v.NAME)
+			notify('Modified Waypoints',"Deleted waypoint: " .. v.NAME)
 			table.remove(pWayPoints, i)
 		end
 	end
@@ -7566,7 +7565,7 @@ addcmd('clearwaypoints',{'cwp','clearpositions','cpos','clearpos'},function(args
 	refreshwaypoints()
 	updatesaves()
 	AllWaypoints = {}
-	notiIY('Modified Waypoints','Removed all waypoints')
+	notify('Modified Waypoints','Removed all waypoints')
 end)
 
 addcmd('cleargamewaypoints',{'cgamewp'},function(args, speaker)
@@ -7589,7 +7588,7 @@ addcmd('cleargamewaypoints',{'cgamewp'},function(args, speaker)
 	end
 	refreshwaypoints()
 	updatesaves()
-	notiIY('Modified Waypoints','Deleted game waypoints')
+	notify('Modified Waypoints','Deleted game waypoints')
 end)
 
 
@@ -7692,16 +7691,16 @@ addcmd('guidelete',{},function(args, speaker)
 			end
 		end
 	end)
-	notiIY('GUI Delete Enabled','Hover over a GUI and press backspace to delete it')
+	notify('GUI Delete Enabled','Hover over a GUI and press backspace to delete it')
 end)
 
 addcmd('unguidelete',{'noguidelete'},function(args, speaker)
 	if deleteGuiInput then deleteGuiInput:Disconnect() end
-	notiIY('GUI Delete Disabled','GUI backspace delete has been disabled')
+	notify('GUI Delete Disabled','GUI backspace delete has been disabled')
 end)
 
 local wasStayOpen = StayOpen
-addcmd('hideIY',{},function(args, speaker)
+addcmd('hideiy',{},function(args, speaker)
 	isHidden = true
 	wasStayOpen = StayOpen
 	if StayOpen == true then
@@ -7710,10 +7709,10 @@ addcmd('hideIY',{},function(args, speaker)
 	end
 	minimizeNum = 0
 	minimizeHolder()
-	if not (args[1] and tostring(args[1]) == 'nonotiIY') then notiIY('IY Hidden','You can press the prefix key to access the command bar') end
+	if not (args[1] and tostring(args[1]) == 'nonotify') then notify('IY Hidden','You can press the prefix key to access the command bar') end
 end)
 
-addcmd('showIY',{'unhideIY'},function(args, speaker)
+addcmd('showiy',{'unhideiy'},function(args, speaker)
 	isHidden = false
 	minimizeNum = -20
 	if wasStayOpen then
@@ -7746,11 +7745,11 @@ end)
 
 addcmd("savegame", {"saveplace"}, function(args, speaker)
     if saveinstance then
-        notiIY("Loading", "Downloading game. This will take a while")
+        notify("Loading", "Downloading game. This will take a while")
         saveinstance()
-        notiIY("Game Saved", "Saved place to the workspace folder within your exploit folder.")
+        notify("Game Saved", "Saved place to the workspace folder within your exploit folder.")
     else
-        notiIY("Incompatible Exploit", "Your exploit does not support this command (missing saveinstance)")
+        notify("Incompatible Exploit", "Your exploit does not support this command (missing saveinstance)")
     end
 end)
 
@@ -7760,7 +7759,7 @@ end)
 
 addcmd('clientantikick',{'antikick'},function(args, speaker)
 	if not hookmetamethod then 
-		return notiIY('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
+		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
 	local LocalPlayer = Players.LocalPlayer
 	local oldhmmi
@@ -7778,13 +7777,13 @@ addcmd('clientantikick',{'antikick'},function(args, speaker)
 		return oldhmmnc(self, ...)
 	end)
 
-	notiIY('Client Antikick','Client anti kick is now active (only effective on localscript kick)')
+	notify('Client Antikick','Client anti kick is now active (only effective on localscript kick)')
 end)
 
 allow_rj = true
 addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 	if not hookmetamethod then 
-		return notiIY('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
+		return notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 	end
 	local TeleportService = TeleportService
 	local oldhmmi
@@ -7806,16 +7805,16 @@ addcmd('clientantiteleport',{'antiteleport'},function(args, speaker)
 		return oldhmmnc(self, ...)
 	end)
 
-	notiIY('Client AntiTP','Client anti teleport is now active (only effective on localscript teleport)')
+	notify('Client AntiTP','Client anti teleport is now active (only effective on localscript teleport)')
 end)
 
 addcmd('allowrejoin',{'allowrj'},function(args, speaker)
 	if args[1] and args[1] == 'false' then
 		allow_rj = false
-		notiIY('Client AntiTP','Allow rejoin set to false')
+		notify('Client AntiTP','Allow rejoin set to false')
 	else
 		allow_rj = true
-		notiIY('Client AntiTP','Allow rejoin set to true')
+		notify('Client AntiTP','Allow rejoin set to true')
 	end
 end)
 
@@ -7879,15 +7878,15 @@ addcmd('setfpscap', {'fpscap', 'maxfps'}, function(args, speaker)
 		elseif num > 0 then
 			return setfpscap(num)
 		else
-			return notiIY('Invalid argument', "Please provide a number above 0 or 'none'.")
+			return notify('Invalid argument', "Please provide a number above 0 or 'none'.")
 		end
 	else
-		return notiIY('Incompatible Exploit', 'Your exploit does not support this command (missing setfpscap)')
+		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing setfpscap)')
 	end
 end)
 
-addcmd('notiIY',{},function(args, speaker)
-	notiIY(getstring(1))
+addcmd('notify',{},function(args, speaker)
+	notify(getstring(1))
 end)
 
 addcmd('lastcommand',{'lastcmd'},function(args, speaker)
@@ -7905,7 +7904,7 @@ addcmd('esp',{},function(args, speaker)
 			end
 		end
 	else
-		notiIY('ESP','Disable chams (nochams) before using esp')
+		notify('ESP','Disable chams (nochams) before using esp')
 	end
 end)
 
@@ -7999,7 +7998,7 @@ addcmd('chams',{},function(args, speaker)
 			end
 		end
 	else
-		notiIY('Chams','Disable ESP (noesp) before using chams')
+		notify('Chams','Disable ESP (noesp) before using chams')
 	end
 end)
 
@@ -8052,7 +8051,7 @@ addcmd('view',{'spectate'},function(args, speaker)
 		end
 		viewing = Players[v]
 		workspace.CurrentCamera.CameraSubject = viewing.Character
-		notiIY('Spectate','Viewing ' .. Players[v].Name)
+		notify('Spectate','Viewing ' .. Players[v].Name)
 		local function viewDiedFunc()
 			repeat wait() until Players[v].Character ~= nil and getRoot(Players[v].Character)
 			workspace.CurrentCamera.CameraSubject = viewing.Character
@@ -8081,7 +8080,7 @@ addcmd('unview',{'unspectate'},function(args, speaker)
 	StopFreecam()
 	if viewing ~= nil then
 		viewing = nil
-		notiIY('Spectate','View turned off')
+		notify('Spectate','View turned off')
 	end
 	if viewDied then
 		viewDied:Disconnect()
@@ -8235,7 +8234,7 @@ function GetFocusDistance(cameraFrame)
 	local projy = 2*math.tan(cameraFov/2)
 	local projx = viewport.x/viewport.y*projy
 	local fx = cameraFrame.rightVector
-	local IY = cameraFrame.upVector
+	local fy = cameraFrame.upVector
 	local fz = cameraFrame.lookVector
 
 	local minVect = Vector3.new()
@@ -8245,7 +8244,7 @@ function GetFocusDistance(cameraFrame)
 		for y = 0, 1, 0.5 do
 			local cx = (x - 0.5)*projx
 			local cy = (y - 0.5)*projy
-			local offset = fx*cx - IY*cy + fz
+			local offset = fx*cx - fy*cy + fz
 			local origin = cameraFrame.p + offset*znear
 			local _, hit = workspace:FindPartOnRay(Ray.new(origin, offset.unit*minDist))
 			local dist = (hit - origin).magnitude
@@ -8398,11 +8397,11 @@ addcmd('freecamspeed',{'fcspeed'},function(args, speaker)
 	end
 end)
 
-addcmd('notiIYfreecamposition',{'notiIYfcpos'},function(args, speaker)
+addcmd('notifyfreecamposition',{'notifyfcpos'},function(args, speaker)
 	if fcRunning then
 		local X,Y,Z = workspace.CurrentCamera.CFrame.Position.X,workspace.CurrentCamera.CFrame.Position.Y,workspace.CurrentCamera.CFrame.Position.Z
 		local Format, Round = string.format, math.round
-		notiIY("Current Position", Format("%s, %s, %s", Round(X), Round(Y), Round(Z)))
+		notify("Current Position", Format("%s, %s, %s", Round(X), Round(Y), Round(Z)))
 	end
 end)
 
@@ -8467,7 +8466,7 @@ end)
 
 addcmd('enableshiftlock',{'enablesl','shiftlock'},function(args, speaker)
 	speaker.DevEnableMouseLock = true
-	notiIY('Shiftlock','Shift lock is now available')
+	notify('Shiftlock','Shift lock is now available')
 end)
 
 addcmd('firstp',{},function(args, speaker)
@@ -8482,7 +8481,7 @@ addcmd('noclipcam', {'nccam'}, function(args, speaker)
 	local sc = (debug and debug.setconstant) or setconstant
 	local gc = (debug and debug.getconstants) or getconstants
 	if not sc or not getgc or not gc then
-		return notiIY('Incompatible Exploit', 'Your exploit does not support this command (missing setconstant or getconstants or getgc)')
+		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing setconstant or getconstants or getgc)')
 	end
 	local pop = speaker.PlayerScripts.PlayerModule.CameraModule.ZoomController.Popper
 	for _, v in pairs(getgc()) do
@@ -8541,7 +8540,7 @@ addcmd('delete',{'remove'},function(args, speaker)
 			v:Destroy()
 		end
 	end
-	notiIY('Item(s) Deleted','Deleted ' ..getstring(1))
+	notify('Item(s) Deleted','Deleted ' ..getstring(1))
 end)
 
 addcmd('deleteclass',{'removeclass','deleteclassname','removeclassname','dc'},function(args, speaker)
@@ -8550,7 +8549,7 @@ addcmd('deleteclass',{'removeclass','deleteclassname','removeclassname','dc'},fu
 			v:Destroy()
 		end
 	end
-	notiIY('Item(s) Deleted','Deleted items with ClassName ' ..getstring(1))
+	notify('Item(s) Deleted','Deleted items with ClassName ' ..getstring(1))
 end)
 
 addcmd('chardelete',{'charremove','cd'},function(args, speaker)
@@ -8559,7 +8558,7 @@ addcmd('chardelete',{'charremove','cd'},function(args, speaker)
 			v:Destroy()
 		end
 	end
-	notiIY('Item(s) Deleted','Deleted ' ..getstring(1))
+	notify('Item(s) Deleted','Deleted ' ..getstring(1))
 end)
 
 addcmd('chardeleteclass',{'charremoveclass','chardeleteclassname','charremoveclassname','cdc'},function(args, speaker)
@@ -8568,7 +8567,7 @@ addcmd('chardeleteclass',{'charremoveclass','chardeleteclassname','charremovecla
 			v:Destroy()
 		end
 	end
-	notiIY('Item(s) Deleted','Deleted items with ClassName ' ..getstring(1))
+	notify('Item(s) Deleted','Deleted items with ClassName ' ..getstring(1))
 end)
 
 addcmd('deletevelocity',{'dv','removevelocity','removeforces'},function(args, speaker)
@@ -8640,7 +8639,7 @@ addcmd('antiafk',{'antiidle'},function(args, speaker)
 			VirtualUser:ClickButton2(Vector2.new())
 		end)
 	end
-	if not (args[1] and tostring(args[1]) == 'nonotiIY') then notiIY('Anti Idle','Anti idle is enabled') end
+	if not (args[1] and tostring(args[1]) == 'nonotify') then notify('Anti Idle','Anti idle is enabled') end
 end)
 
 addcmd("datalimit", {}, function(args, speaker)
@@ -8683,7 +8682,7 @@ addcmd("promptr15", {}, function(args, speaker)
 end)
 
 addcmd("wallwalk", {"walkonwalls"}, function(args, speaker)
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/inIYiff/backup/main/wallwalker.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/wallwalker.lua"))()
 end)
 
 addcmd('age',{},function(args, speaker)
@@ -8693,7 +8692,7 @@ addcmd('age',{},function(args, speaker)
 		local p = Players[v]
 		table.insert(ages, p.Name.."'s age is: "..p.AccountAge)
 	end
-	notiIY('Account Age',table.concat(ages, ',\n'))
+	notify('Account Age',table.concat(ages, ',\n'))
 end)
 
 addcmd('chatage',{},function(args, speaker)
@@ -8710,7 +8709,7 @@ end)
 addcmd('joindate',{'jd'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	local dates = {}
-	notiIY("Loading",'Hold on a sec')
+	notify("Loading",'Hold on a sec')
 	for i,v in pairs(players) do
 		local user = game:HttpGet("https://users.roblox.com/v1/users/"..Players[v].UserId)
 		local json = HttpService:JSONDecode(user)
@@ -8718,13 +8717,13 @@ addcmd('joindate',{'jd'},function(args, speaker)
 		local splitDates = string.split(date,"-")
 		table.insert(dates,Players[v].Name.." joined: "..splitDates[2].."/"..splitDates[3].."/"..splitDates[1])
 	end
-	notiIY('Join Date (Month/Day/Year)',table.concat(dates, ',\n'))
+	notify('Join Date (Month/Day/Year)',table.concat(dates, ',\n'))
 end)
 
 addcmd('chatjoindate',{'cjd'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	local dates = {}
-	notiIY("Loading",'Hold on a sec')
+	notify("Loading",'Hold on a sec')
 	for i,v in pairs(players) do
 		local user = game:HttpGet("https://users.roblox.com/v1/users/"..Players[v].UserId)
 		local json = HttpService:JSONDecode(user)
@@ -8748,7 +8747,7 @@ addcmd('userid',{'id'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
 		local id = tostring(Players[v].UserId)
-		notiIY('User ID',id)
+		notify('User ID',id)
 	end
 end)
 
@@ -8762,33 +8761,33 @@ end)
 
 addcmd('creatorid',{'creator'},function(args, speaker)
 	if game.CreatorType == Enum.CreatorType.User then
-		notiIY('Creator ID',game.CreatorId)
+		notify('Creator ID',game.CreatorId)
 	elseif game.CreatorType == Enum.CreatorType.Group then
 		local OwnerID = GroupService:GetGroupInfoAsync(game.CreatorId).Owner.Id
 		speaker.UserId = OwnerID
-		notiIY('Creator ID',OwnerID)
+		notify('Creator ID',OwnerID)
 	end
 end)
 
 addcmd('copycreatorid',{'copycreator'},function(args, speaker)
 	if game.CreatorType == Enum.CreatorType.User then
 		toClipboard(game.CreatorId)
-		notiIY('Copied ID','Copied creator ID to clipboard')
+		notify('Copied ID','Copied creator ID to clipboard')
 	elseif game.CreatorType == Enum.CreatorType.Group then
 		local OwnerID = GroupService:GetGroupInfoAsync(game.CreatorId).Owner.Id
 		toClipboard(OwnerID)
-		notiIY('Copied ID','Copied creator ID to clipboard')
+		notify('Copied ID','Copied creator ID to clipboard')
 	end
 end)
 
 addcmd('setcreatorid',{'setcreator'},function(args, speaker)
 	if game.CreatorType == Enum.CreatorType.User then
 		speaker.UserId = game.CreatorId
-		notiIY('Set ID','Set UserId to '..game.CreatorId)
+		notify('Set ID','Set UserId to '..game.CreatorId)
 	elseif game.CreatorType == Enum.CreatorType.Group then
 		local OwnerID = GroupService:GetGroupInfoAsync(game.CreatorId).Owner.Id
 		speaker.UserId = OwnerID
-		notiIY('Set ID','Set UserId to '..OwnerID)
+		notify('Set ID','Set UserId to '..OwnerID)
 	end
 end)
 
@@ -8796,7 +8795,7 @@ addcmd('appearanceid',{'aid'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players) do
 		local aid = tostring(Players[v].CharacterAppearanceId)
-		notiIY('Appearance ID',aid)
+		notify('Appearance ID',aid)
 	end
 end)
 
@@ -8820,7 +8819,7 @@ addcmd('2022materials',{'use2022materials'},function(args, speaker)
 	if sethidden then
 		sethidden(MaterialService, "Use2022Materials", true)
 	else
-		notiIY('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
+		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
 	end
 end)
 
@@ -8828,7 +8827,7 @@ addcmd('un2022materials',{'unuse2022materials'},function(args, speaker)
 	if sethidden then
 		sethidden(MaterialService, "Use2022Materials", false)
 	else
-		notiIY('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
+		notify('Incompatible Exploit','Your exploit does not support this command (missing sethiddenproperty)')
 	end
 end)
 
@@ -9106,7 +9105,7 @@ addcmd('unwalkto',{'nowalkto','unfollow','nofollow'},function(args, speaker)
 end)
 
 addcmd("orbit", {}, function(args, speaker)
-    execCmd("unorbit nonotiIY")
+    execCmd("unorbit nonotify")
     local target = Players:FindFirstChild(getPlayer(args[1], speaker)[1])
     local root = getRoot(speaker.Character)
     local humanoid = speaker.Character:FindFirstChildWhichIsA("Humanoid")
@@ -9127,7 +9126,7 @@ addcmd("orbit", {}, function(args, speaker)
         end)
         orbit3 = humanoid.Died:Connect(function() execCmd("unorbit") end)
         orbit4 = humanoid.Seated:Connect(function(value) if value then execCmd("unorbit") end end)
-        notiIY("Orbit", "Started orbiting " .. formatUsername(target))
+        notify("Orbit", "Started orbiting " .. formatUsername(target))
     end
 end)
 
@@ -9136,7 +9135,7 @@ addcmd("unorbit", {}, function(args, speaker)
     if orbit2 then orbit2:Disconnect() end
     if orbit3 then orbit3:Disconnect() end
     if orbit4 then orbit4:Disconnect() end
-    if args[1] ~= "nonotiIY" then notiIY("Orbit", "Stopped orbiting player") end
+    if args[1] ~= "nonotify" then notify("Orbit", "Stopped orbiting player") end
 end)
 
 addcmd('freeze',{'fr'},function(args, speaker)
@@ -9190,7 +9189,7 @@ end)
 
 local notifiedRespectFiltering = false
 addcmd('muteboombox',{},function(args, speaker)
-	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then notifiedRespectFiltering = true notiIY('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
+	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then notifiedRespectFiltering = true notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
 		for i,v in pairs(players) do
@@ -9211,7 +9210,7 @@ addcmd('muteboombox',{},function(args, speaker)
 end)
 
 addcmd('unmuteboombox',{},function(args, speaker)
-	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then notifiedRespectFiltering = true notiIY('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
+	if not notifiedRespectFiltering and SoundService.RespectFilteringEnabled then notifiedRespectFiltering = true notify('RespectFilteringEnabled','RespectFilteringEnabled is set to true (the command will still work but may only be clientsided)') end
 	local players = getPlayer(args[1], speaker)
 	if players ~= nil then
 		for i,v in pairs(players) do
@@ -9397,7 +9396,7 @@ addcmd('invisible',{'invis'},function(args, speaker)
 		end)
 		invisRunning = false
 	end
-	notiIY('Invisible','You now appear invisible to other players')
+	notify('Invisible','You now appear invisible to other players')
 end)
 
 addcmd("visible", {"vis"}, function(args, speaker)
@@ -9840,7 +9839,7 @@ addcmd('spasm',{},function(args, speaker)
 		Spasm:Play()
 		Spasm:AdjustSpeed(99)
 	else
-		notiIY('R6 Required','This command requires the r6 rig type')
+		notify('R6 Required','This command requires the r6 rig type')
 	end
 end)
 
@@ -9858,7 +9857,7 @@ addcmd('headthrow',{},function(args, speaker)
 		k:Play(0)
 		k:AdjustSpeed(1)
 	else
-		notiIY('R6 Required','This command requires the r6 rig type')
+		notify('R6 Required','This command requires the r6 rig type')
 	end
 end)
 
@@ -9874,7 +9873,7 @@ addcmd('animation',{'anim'},function(args, speaker)
 			k:AdjustSpeed(tostring(args[2]))
 		end
 	else
-		notiIY('R6 Required','This command requires the r6 rig type')
+		notify('R6 Required','This command requires the r6 rig type')
 	end
 end)
 
@@ -9941,7 +9940,7 @@ addcmd("copyanimationid", {"copyanimid", "copyemoteid"}, function(args, speaker)
         if found ~= "Animations Copied" then
             toClipboard(found)
         else
-            notiIY("Animations", "No animations to copy")
+            notify("Animations", "No animations to copy")
         end
     end
 
@@ -9966,7 +9965,7 @@ addcmd('refreshanimations', {'refreshanimation', 'refreshanims', 'refreshanim'},
 	local Human = Char and Char:WaitForChild('Humanoid', 15)
 	local Animate = Char and Char:WaitForChild('Animate', 15)
 	if not Human or not Animate then
-		return notiIY('Refresh Animations', 'Failed to get Animate/Humanoid')
+		return notify('Refresh Animations', 'Failed to get Animate/Humanoid')
 	end
 	Animate.Disabled = true
 	for _, v in ipairs(Human:GetPlayingAnimationTracks()) do
@@ -10031,7 +10030,7 @@ end)
 
 addcmd('clickteleport',{},function(args, speaker)
 	if speaker == Players.LocalPlayer then
-		notiIY('Click TP','Go to Settings>Keybinds>Add to set up click tp')
+		notify('Click TP','Go to Settings>Keybinds>Add to set up click tp')
 	end
 end)
 
@@ -10052,21 +10051,21 @@ end)
 
 addcmd('clickdelete',{},function(args, speaker)
 	if speaker == Players.LocalPlayer then
-		notiIY('Click Delete','Go to Settings>Keybinds>Add to set up click delete')
+		notify('Click Delete','Go to Settings>Keybinds>Add to set up click delete')
 	end
 end)
 
-addcmd('getposition',{'getpos','notiIYpos','notiIYposition'},function(args, speaker)
+addcmd('getposition',{'getpos','notifypos','notifyposition'},function(args, speaker)
 	local players = getPlayer(args[1], speaker)
 	for i,v in pairs(players)do
 		local char = Players[v].Character
 		local pos = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"))
 		pos = pos and pos.Position
 		if not pos then
-			return notiIY('Getposition Error','Missing character')
+			return notify('Getposition Error','Missing character')
 		end
 		local roundedPos = math.round(pos.X) .. ", " .. math.round(pos.Y) .. ", " .. math.round(pos.Z)
-		notiIY('Current Position',roundedPos)
+		notify('Current Position',roundedPos)
 	end
 end)
 
@@ -10077,7 +10076,7 @@ addcmd('copyposition',{'copypos'},function(args, speaker)
 		local pos = char and (getRoot(char) or char:FindFirstChildWhichIsA("BasePart"))
 		pos = pos and pos.Position
 		if not pos then
-			return notiIY('Getposition Error','Missing character')
+			return notify('Getposition Error','Missing character')
 		end
 		local roundedPos = math.round(pos.X) .. ", " .. math.round(pos.Y) .. ", " .. math.round(pos.Z)
 		toClipboard(roundedPos)
@@ -10127,7 +10126,7 @@ addcmd('spoofspeed',{'spoofws','spoofwalkspeed'},function(args, speaker)
 				return newindex(self, key, value)
 			end)
 		else
-			notiIY('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
+			notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 		end
 	end
 end)
@@ -10181,7 +10180,7 @@ addcmd('spoofjumppower',{'spoofjp'},function(args, speaker)
 				return newindex(self, key, value)
 			end)
 		else
-			notiIY('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
+			notify('Incompatible Exploit','Your exploit does not support this command (missing hookmetamethod)')
 		end
 	end
 end)
@@ -10243,7 +10242,7 @@ addcmd('tools',{'gears'},function(args, speaker)
 		end
 	end
 	copy(ReplicatedStorage)
-	notiIY('Tools','Copied tools from ReplicatedStorage and Lighting')
+	notify('Tools','Copied tools from ReplicatedStorage and Lighting')
 end)
 
 addcmd('notools',{'rtools','clrtools','removetools','deletetools','dtools'},function(args, speaker)
@@ -10273,9 +10272,9 @@ end)
 
 addcmd('oldconsole',{},function(args, speaker)
 	-- Thanks wally!!
-	notiIY("Loading",'Hold on a sec')
+	notify("Loading",'Hold on a sec')
 	local _, str = pcall(function()
-		return game:HttpGet("https://raw.githubusercontent.com/inIYiff/backup/main/console.lua", true)
+		return game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/console.lua", true)
 	end)
 
 	local s, e = loadstring(str)
@@ -10292,16 +10291,16 @@ addcmd('oldconsole',{},function(args, speaker)
 		end
 	end
 	wait(1)
-	notiIY('Console','Press F9 to open the console')
+	notify('Console','Press F9 to open the console')
 end)
 
 addcmd('explorer', {'dex'}, function(args, speaker)
-	notiIY('Loading', 'Hold on a sec')
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/inIYiff/backup/main/dex.lua"))()
+	notify('Loading', 'Hold on a sec')
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
 end)
 
 addcmd('olddex', {'odex'}, function(args, speaker)
-	notiIY('Loading old explorer', 'Hold on a sec')
+	notify('Loading old explorer', 'Hold on a sec')
 
 	local getobjects = function(a)
 		local Objects = {}
@@ -10381,15 +10380,15 @@ addcmd('olddex', {'odex'}, function(args, speaker)
 end)
 
 addcmd('remotespy',{'rspy'},function(args, speaker)
-	notiIY("Loading",'Hold on a sec')
+	notify("Loading",'Hold on a sec')
 	-- Full credit to exx, creator of SimpleSpy
 	-- also thanks to NoobSploit for fixing
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/inIYiff/backup/main/SimpleSpyV3/main.lua"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/SimpleSpyV3/main.lua"))()
 end)
 
 addcmd('audiologger',{'alogger'},function(args, speaker)
-	notiIY("Loading",'Hold on a sec')
-	loadstring(game:HttpGet(('https://raw.githubusercontent.com/inIYiff/backup/main/audiologger.lua'),true))()
+	notify("Loading",'Hold on a sec')
+	loadstring(game:HttpGet(('https://raw.githubusercontent.com/infyiff/backup/main/audiologger.lua'),true))()
 end)
 
 local loopgoto = nil
@@ -10638,7 +10637,7 @@ addcmd('carpet',{},function(args, speaker)
 			end)
 		end
 	else
-		notiIY('R6 Required','This command requires the r6 rig type')
+		notify('R6 Required','This command requires the r6 rig type')
 	end
 end)
 
@@ -10792,7 +10791,7 @@ addcmd('fireclickdetectors',{'firecd','firecds'}, function(args, speaker)
 			end
 		end
 	else
-		notiIY("Incompatible Exploit", "Your exploit does not support this command (missing fireclickdetector)")
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing fireclickdetector)")
 	end
 end)
 
@@ -10821,7 +10820,7 @@ addcmd('fireproximityprompts',{'firepp'},function(args, speaker)
 			end
 		end
 	else
-		notiIY("Incompatible Exploit", "Your exploit does not support this command (missing fireproximityprompt)")
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing fireproximityprompt)")
 	end
 end)
 
@@ -10834,7 +10833,7 @@ addcmd('instantproximityprompts',{'instantpp'},function(args, speaker)
 			fireproximityprompt(prompt)
 		end)
 	else
-		notiIY('Incompatible Exploit','Your exploit does not support this command (missing fireproximityprompt)')
+		notify('Incompatible Exploit','Your exploit does not support this command (missing fireproximityprompt)')
 	end
 end)
 
@@ -10845,8 +10844,8 @@ addcmd('uninstantproximityprompts',{'uninstantpp'},function(args, speaker)
 	end
 end)
 
-addcmd('notiIYping',{'ping'},function(args, speaker)
-	notiIY("Ping", math.round(speaker:GetNetworkPing() * 1000) .. "ms")
+addcmd('notifyping',{'ping'},function(args, speaker)
+	notify("Ping", math.round(speaker:GetNetworkPing() * 1000) .. "ms")
 end)
 
 addcmd('grabtools', {}, function(args, speaker)
@@ -10867,7 +10866,7 @@ addcmd('grabtools', {}, function(args, speaker)
 		end
 	end)
 
-	notiIY("Grabtools", "Picking up any dropped tools")
+	notify("Grabtools", "Picking up any dropped tools")
 end)
 
 addcmd('nograbtools',{'ungrabtools'},function(args, speaker)
@@ -10875,7 +10874,7 @@ addcmd('nograbtools',{'ungrabtools'},function(args, speaker)
 		grabtoolsFunc:Disconnect() 
 	end
 
-	notiIY("Grabtools", "Grabtools has been disabled")
+	notify("Grabtools", "Grabtools has been disabled")
 end)
 
 local specifictoolremoval = {}
@@ -10965,12 +10964,12 @@ addcmd('spawnpoint',{'spawn'},function(args, speaker)
 	spawnpos = getRoot(speaker.Character).CFrame
 	spawnpoint = true
 	spDelay = tonumber(args[1]) or 0.1
-	notiIY('Spawn Point','Spawn point created at '..tostring(spawnpos))
+	notify('Spawn Point','Spawn point created at '..tostring(spawnpos))
 end)
 
 addcmd('nospawnpoint',{'nospawn','removespawnpoint'},function(args, speaker)
 	spawnpoint = false
-	notiIY('Spawn Point','Removed spawn point')
+	notify('Spawn Point','Removed spawn point')
 end)
 
 addcmd('flashback',{'diedtp'},function(args, speaker)
@@ -11059,7 +11058,7 @@ addcmd('clearhats',{'cleanhats'},function(args, speaker)
 			end
 		end
 	else
-		notiIY("Incompatible Exploit","Your exploit does not support this command (missing firetouchinterest)")
+		notify("Incompatible Exploit","Your exploit does not support this command (missing firetouchinterest)")
 	end
 end)
 
@@ -11067,7 +11066,7 @@ addcmd('split',{},function(args, speaker)
 	if r15(speaker) then
 		speaker.Character.UpperTorso.Waist:Destroy()
 	else
-		notiIY('R15 Required','This command requires the r15 rig type')
+		notify('R15 Required','This command requires the r15 rig type')
 	end
 end)
 
@@ -11228,7 +11227,7 @@ end)
 
 addcmd('touchinterests', {'touchinterest', 'firetouchinterests', 'firetouchinterest'}, function(args, speaker)
 	if not firetouchinterest then
-		notiIY("Incompatible Exploit", "Your exploit does not support this command (missing firetouchinterest)")
+		notify("Incompatible Exploit", "Your exploit does not support this command (missing firetouchinterest)")
 		return
 	end
 
@@ -11544,7 +11543,7 @@ end)
 
 addcmd("antichatlogs", {"antichatlogger"}, function(args, speaker)
     if not isLegacyChat then
-        return notiIY("antichatlogs", "Game needs the legacy chat")
+        return notify("antichatlogs", "Game needs the legacy chat")
     end
     local MessagePosted, _ = pcall(function()
         rawset(require(speaker:FindFirstChild("PlayerScripts"):FindFirstChild("ChatScript").ChatMain), "MessagePosted", {
@@ -11559,7 +11558,7 @@ addcmd("antichatlogs", {"antichatlogger"}, function(args, speaker)
             end
         })
     end)
-    notiIY("antichatlogs", MessagePosted and "Enabled" or "Failed to enable antichatlogs")
+    notify("antichatlogs", MessagePosted and "Enabled" or "Failed to enable antichatlogs")
 end)
 
 flinging = false
@@ -11792,7 +11791,7 @@ function attach(speaker,target)
 			hrp.CFrame = hrp2.CFrame
 		until (tool.Parent ~= char or not hrp or not hrp2 or not hrp.Parent or not hrp2.Parent or n > 250) and n > 2
 	else
-		notiIY('Tool Required','You need to have an item in your inventory to use this command')
+		notify('Tool Required','You need to have an item in your inventory to use this command')
 	end
 end
 
@@ -11822,7 +11821,7 @@ function kill(speaker,target,fast)
 			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
 		end
 	else
-		notiIY('Tool Required','You need to have an item in your inventory to use this command')
+		notify('Tool Required','You need to have an item in your inventory to use this command')
 	end
 end
 
@@ -11835,13 +11834,13 @@ end)
 
 addcmd('handlekill', {'hkill'}, function(args, speaker)
 	if not firetouchinterest then
-		return notiIY('Incompatible Exploit', 'Your exploit does not support this command (missing firetouchinterest)')
+		return notify('Incompatible Exploit', 'Your exploit does not support this command (missing firetouchinterest)')
 	end
 	local RS = RunService.RenderStepped
 	local Tool = speaker.Character.FindFirstChildWhichIsA(speaker.Character, "Tool")
 	local Handle = Tool and Tool.FindFirstChild(Tool, "Handle")
 	if not Tool or not Handle then
-		return notiIY("Handle Kill", "You need to hold a \"Tool\" that does damage on touch. For example the default \"Sword\" tool.")
+		return notify("Handle Kill", "You need to hold a \"Tool\" that does damage on touch. For example the default \"Sword\" tool.")
 	end
 	for _, v in ipairs(getPlayer(args[1], speaker)) do
 		v = Players[v]
@@ -11855,7 +11854,7 @@ addcmd('handlekill', {'hkill'}, function(args, speaker)
 					v1 = ((v1.IsA(v1, "BasePart") and firetouchinterest(Handle, v1, 1, (RS.Wait(RS) and nil) or firetouchinterest(Handle, v1, 0)) and nil) or v1) or v1
 				end
 			end
-			notiIY("Handle Kill Stopped!", v.Name .. " died/left or you unequipped the tool!")
+			notify("Handle Kill Stopped!", v.Name .. " died/left or you unequipped the tool!")
 		end)
 	end
 end)
@@ -11906,7 +11905,7 @@ function bring(speaker,target,fast)
 			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
 		end
 	else
-		notiIY('Tool Required','You need to have an item in your inventory to use this command')
+		notify('Tool Required','You need to have an item in your inventory to use this command')
 	end
 end
 
@@ -11945,7 +11944,7 @@ function teleport(speaker,target,target2,fast)
 			speaker.CharacterAdded:Wait():WaitForChild("HumanoidRootPart").CFrame = NormPos
 		end
 	else
-		notiIY('Tool Required','You need to have an item in your inventory to use this command')
+		notify('Tool Required','You need to have an item in your inventory to use this command')
 	end
 end
 
@@ -12088,14 +12087,14 @@ addcmd('autoclick',{},function(args, speaker)
 				end
 			end
 		end)
-		notiIY('Auto Clicker',"Press [backspace] and [=] at the same time to stop")
+		notify('Auto Clicker',"Press [backspace] and [=] at the same time to stop")
 		repeat wait(clickDelay)
 			mouse1press()
 			wait(releaseDelay)
 			mouse1release()
 		until autoclicking == false
 	else
-		notiIY('Auto Clicker',"Your exploit doesn't have the ability to use the autoclick")
+		notify('Auto Clicker',"Your exploit doesn't have the ability to use the autoclick")
 	end
 end)
 
@@ -12249,7 +12248,7 @@ RolewatchConnection = Players.PlayerAdded:Connect(function(player)
 			if RolewatchData.Leave == true then
 				Players.LocalPlayer:Kick("\n\nRolewatch\nPlayer \"" .. tostring(player.Name) .. "\" has joined with the Role \"" .. RolewatchData.Role .. "\"\n")
 			else
-				notiIY("Rolewatch", "Player \"" .. tostring(player.Name) .. "\" has joined with the Role \"" .. RolewatchData.Role .. "\"")
+				notify("Rolewatch", "Player \"" .. tostring(player.Name) .. "\" has joined with the Role \"" .. RolewatchData.Role .. "\"")
 			end
 		end
 	end
@@ -12261,7 +12260,7 @@ addcmd("rolewatch", {}, function(args, speaker)
     if groupId and roleName then
         RolewatchData.Group = groupId
         RolewatchData.Role = roleName
-        notiIY("Rolewatch", "Watching Group ID \"" .. tostring(groupId) .. "\" for Role \"" .. roleName .. "\"")
+        notify("Rolewatch", "Watching Group ID \"" .. tostring(groupId) .. "\" for Role \"" .. roleName .. "\"")
     end
 end)
 
@@ -12269,12 +12268,12 @@ addcmd("rolewatchstop", {}, function(args, speaker)
     RolewatchData.Group = 0
     RolewatchData.Role = ""
     RolewatchData.Leave = false
-    notiIY("Rolewatch", "Disabled")
+    notify("Rolewatch", "Disabled")
 end)
 
 addcmd("rolewatchleave", {"unrolewatch"}, function(args, speaker)
     RolewatchData.Leave = not RolewatchData.Leave
-    notiIY("Rolewatch", RolewatchData.Leave and "Leave has been Enabled" or "Leave has been Disabled")
+    notify("Rolewatch", RolewatchData.Leave and "Leave has been Enabled" or "Leave has been Disabled")
 end)
 
 staffRoles = {"mod", "admin", "staff", "dev", "founder", "owner", "supervis", "manager", "management", "executive", "president", "chairman", "chairwoman", "chairperson", "director"}
@@ -12303,7 +12302,7 @@ addcmd("staffwatch", {}, function(args, speaker)
         staffwatchjoin = Players.PlayerAdded:Connect(function(player)
             local result = getStaffRole(player)
             if result.Staff then
-                notiIY("Staffwatch", formatUsername(player) .. " is a " .. result.Role)
+                notify("Staffwatch", formatUsername(player) .. " is a " .. result.Role)
             end
         end)
         for _, player in pairs(Players:GetPlayers()) do
@@ -12313,12 +12312,12 @@ addcmd("staffwatch", {}, function(args, speaker)
             end
         end
         if #found > 0 then
-            notiIY("Staffwatch", table.concat(found, ",\n"))
+            notify("Staffwatch", table.concat(found, ",\n"))
         else
-            notiIY("Staffwatch", "Enabled")
+            notify("Staffwatch", "Enabled")
         end
     else
-        notiIY("Staffwatch", "Game is not owned by a Group")
+        notify("Staffwatch", "Game is not owned by a Group")
     end
 end)
 
@@ -12326,7 +12325,7 @@ addcmd("unstaffwatch", {}, function(args, speaker)
     if staffwatchjoin then
         staffwatchjoin:Disconnect()
     end
-    notiIY("Staffwatch", "Disabled")
+    notify("Staffwatch", "Disabled")
 end)
 
 addcmd('removeterrain',{'rterrain','noterrain'},function(args, speaker)
@@ -12339,7 +12338,7 @@ addcmd('clearnilinstances',{'nonilinstances','cni'},function(args, speaker)
 			v:Destroy()
 		end
 	else
-		notiIY('Incompatible Exploit','Your exploit does not support this command (missing getnilinstances)')
+		notify('Incompatible Exploit','Your exploit does not support this command (missing getnilinstances)')
 	end
 end)
 
@@ -12363,7 +12362,7 @@ end)
 
 antivoidloop = false
 addcmd("antivoid", {}, function(args, speaker)
-    execCmd("unantivoid nonotiIY")
+    execCmd("unantivoid nonotify")
     wait()
     antivoidloop = RunService.Stepped:Connect(function()
         local root = getRoot(speaker.Character)
@@ -12371,13 +12370,13 @@ addcmd("antivoid", {}, function(args, speaker)
             root.Velocity = root.Velocity + Vector3.new(0, 250, 0)
         end
     end)
-    notiIY("antivoid", "Enabled")
+    notify("antivoid", "Enabled")
 end)
 
 addcmd("unantivoid", {"noantivoid"}, function(args, speaker)
     antivoidloop:Disconnect()
     antivoidloop = nil
-    if args[1] ~= "nonotiIY" then notiIY("antivoid", "Disabled") end
+    if args[1] ~= "nonotify" then notify("antivoid", "Disabled") end
 end)
 
 addcmd('trip',{},function(args, speaker)
@@ -12583,7 +12582,7 @@ cancelAutoKeyPress = nil
 addcmd('autokeypress',{'keypress'},function(args, speaker)
 	if keypress and keyrelease and args[1] then
 		local code = keycodeMap[args[1]:lower()]
-		if not code then notiIY('Auto Key Press',"Invalid key") return end
+		if not code then notify('Auto Key Press',"Invalid key") return end
 		execCmd('unautokeypress')
 		wait()
 		local clickDelay = 0.1
@@ -12599,7 +12598,7 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 				end
 			end
 		end)
-		notiIY('Auto Key Press',"Press [backspace] and [=] at the same time to stop")
+		notify('Auto Key Press',"Press [backspace] and [=] at the same time to stop")
 		repeat wait(clickDelay)
 			keypress(code)
 			wait(releaseDelay)
@@ -12607,7 +12606,7 @@ addcmd('autokeypress',{'keypress'},function(args, speaker)
 		until autoKeyPressing == false
 		if cancelAutoKeyPress then cancelAutoKeyPress:Disconnect() keyrelease(code) end
 	else
-		notiIY('Auto Key Press',"Your exploit doesn't have the ability to use auto key press")
+		notify('Auto Key Press',"Your exploit doesn't have the ability to use auto key press")
 	end
 end)
 
@@ -12807,7 +12806,7 @@ task.spawn(function()
 
 	if success then
 		if currentVersion ~= latestVersionInfo.Version then
-			notiIY('Outdated','Get the new version at inIYiff.github.io')
+			notify('Outdated','Get the new version at infyiff.github.io')
 		end
 
 		if latestVersionInfo.Announcement and latestVersionInfo.Announcement ~= '' then
@@ -12909,5 +12908,5 @@ task.spawn(function()
 	Credits:Destroy()
 	IntroBackground:Destroy()
 	minimizeHolder()
-	if IsOnMobile then notiIY("Unstable Device", "On mobile, Infinite Yield may have issues or features that are not functioning correctly.") end
+	if IsOnMobile then notify("Unstable Device", "On mobile, Infinite Yield may have issues or features that are not functioning correctly.") end
 end)
